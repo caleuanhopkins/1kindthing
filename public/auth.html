@@ -1,0 +1,37 @@
+<html>
+	<head>
+		<script type="text/javascript">
+		 
+		  /* Replace #your_subdomain# by the subdomain of a Site in your OneAll account */    
+		  var oneall_subdomain = '1kindthing';
+		 
+		  /* The library is loaded asynchronously */
+		  var oa = document.createElement('script');
+		  oa.type = 'text/javascript'; oa.async = true;
+		  oa.src = '//' + oneall_subdomain + '.api.oneall.com/socialize/library.js';
+		  var s = document.getElementsByTagName('script')[0];
+		  s.parentNode.insertBefore(oa, s);
+		       
+		</script>
+		<script type="text/javascript">
+			var _oneall = _oneall || [];		   
+		</script>		
+	</head>
+	<body>
+		<div id="social_login_demo"></div>
+		<script>
+
+			var my_on_login_redirect = function(args) {
+				console.log(args);
+				//window.location.href = '/kindness?auth_token='+args.connection.user_token			 
+				return false;
+			}
+
+			var _oneall = _oneall || [];
+			_oneall.push(['social_login', 'set_providers', ['facebook', 'twitter' ]]);
+		  	//_oneall.push(['social_login', 'set_event', 'on_login_redirect', my_on_login_redirect ]);
+		  	_oneall.push(['social_login', 'set_callback_uri', 'http://localhost:3000/callback']);
+			_oneall.push(['social_login', 'do_render_ui', 'social_login_demo']);
+		</script>
+	</body>
+</html>
