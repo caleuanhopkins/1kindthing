@@ -39,7 +39,7 @@ app.get('/', function (req, res) {
 app.get('/kindness', function (req, res){
 
 	var oneall = new Oneall({
-	    endpoint: 'https://1kindthing.api.oneall.com/',
+	    endpoint: 'https://1kindthing.api.oneall.com',
 	    publickey: '0f57d31c-6135-46e1-92e3-490fe2d5956d',
 	    privatekey: 'c3d98e8e-0d35-4863-9533-4a60ee909742'
 	});
@@ -56,14 +56,15 @@ app.get('/kindness', function (req, res){
 	        }
 	        //data = JSON.parse(data);
 	        //fullData = JSON.parse(fullData);
-	        console.log(data);
-	        console.log(fullData);
+	        res.send(JSON.stringify(fullData.response));
 	    }
 	  );
 
 
+	    //res.setHeader('Content-Type', 'application/json');
+	    //res.send(JSON.stringify({ msg: fullData }));
 
-	  console.log(oneall);
+	  /*console.log(oneall);
    	request({url: "https://1kindthing.api.oneall.com/connection/"+token+".json", USERPWD: '0f57d31c-6135-46e1-92e3-490fe2d5956d:c3d98e8e-0d35-4863-9533-4a60ee909742' }, function(err, request, data) {
 	    
    		var returnStr = '';
@@ -85,7 +86,7 @@ app.get('/kindness', function (req, res){
 
 	    res.setHeader('Content-Type', 'application/json');
 	    res.send(JSON.stringify({ status: status, msg: returnStr }));
-   	});
+   	});*/
 });
 
 app.get('/auth', function(req, res){
