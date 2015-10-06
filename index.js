@@ -14,6 +14,17 @@ var bodyParser   = require('body-parser');
 
 var app = express();
 
+var gDriveKeys = require('./1kindthing-aee6d0c38aa5.json');
+
+var GoogleSpreadsheet = require('google-spreadsheet');
+
+var creds = {
+  client_email: gDriveKeys.client_email,
+  private_key: gDriveKeys.private_key
+}
+
+var actSheet = new GoogleSpreadsheet(gDriveKeys.spreadsheet_id);
+
 app.set('view engine', nunjucks.render);
 app.set('views', __dirname + '/public');
 
@@ -38,7 +49,7 @@ app.get('/', function (req, res) {
     
 app.get('/kindness', function (req, res){
 
-	var oneall = new Oneall({
+	/*var oneall = new Oneall({
 	    endpoint: 'https://1kindthing.api.oneall.com',
 	    publickey: '0f57d31c-6135-46e1-92e3-490fe2d5956d',
 	    privatekey: 'c3d98e8e-0d35-4863-9533-4a60ee909742'
@@ -58,35 +69,31 @@ app.get('/kindness', function (req, res){
 	        //fullData = JSON.parse(fullData);
 	        res.send(JSON.stringify(fullData.response));
 	    }
-	  );
+	  );*/
 
+	var kindActs = '';
 
-	    //res.setHeader('Content-Type', 'application/json');
-	    //res.send(JSON.stringify({ msg: fullData }));
+	actSheet.useServiceAccountAuth(creds, function(err){
+		var i=1;
+		actSheet.getRows( 1, function(err, row_data){
+			var randKey = Math.floor(Math.random() * (row_data.length - 1 + 1)) + 1;
+			console.log(row_data[randKey].acts);
+			kindActs = row_data[randKey].acts;
 
-	  /*console.log(oneall);
-   	request({url: "https://1kindthing.api.oneall.com/connection/"+token+".json", USERPWD: '0f57d31c-6135-46e1-92e3-490fe2d5956d:c3d98e8e-0d35-4863-9533-4a60ee909742' }, function(err, request, data) {
-	    
-   		var returnStr = '';
-   		var apiData = JSON.parse(data);
+			res.setHeader('Content-Type', 'application/json');
+			res.send(JSON.stringify({ act: kindActs }));
 
+		});
+	});
 
-	    if (!err && res.statusCode == 200 && apiData.response.request.status.code == 200) {
-	    	status = res.statusCode;
-	    	console.log(apiData);
-    		returnStr = 'This is just a test';
-	    }else{
-	    	status = res.statusCode;
-	    	if(err){
-    			returnStr = err;
-    		}else{
-    			returnStr = apiData.response.request.status.info;
-    		}
-	    }
+});
 
-	    res.setHeader('Content-Type', 'application/json');
-	    res.send(JSON.stringify({ status: status, msg: returnStr }));
-   	});*/
+app.post('/kindness', function (req, res){
+	actSheet.useServiceAccountAuth(creds, function(err){
+		actSheet.addRow( 1, { acts: request.body.act} );
+		res.setHeader('Content-Type', 'application/json');
+		res.send(JSON.stringify({ msg: 'thank you! your act of kindness suggestion has been submitted' }));
+	});
 });
 
 app.get('/auth', function(req, res){
